@@ -13,15 +13,22 @@ after_success:
   - docker build -t jamesmurphyx/multi-nginx ./nginx
   - docker build -t jamesmurphyx/multi-server ./server
   - docker build -t jamesmurphyx/multi-worker ./worker
-
-deploy:
-  provider: elasticbeanstalk
-  region: "us-west-2"
-  app: "docker"
-  env: "Docker-env"
-  bucket_name: "elasticbeanstalk-us-west-2-306476627547"
-  bucket_path: "docker"
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: "$AWS_SECRET_KEY"
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push the above images to docker hub
+  - docker push jamesmurphyx/multi-client
+  - docker push jamesmurphyx/multi-nginx
+  - docker push jamesmurphyx/multi-server
+  - docker push jamesmurphyx/multi-worker
+#
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "us-west-2"
+#   app: "docker"
+#   env: "Docker-env"
+#   bucket_name: "elasticbeanstalk-us-west-2-306476627547"
+#   bucket_path: "docker"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: "$AWS_SECRET_KEY"
